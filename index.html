@@ -1,0 +1,237 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>六小壬速算</title>
+     <style>
+         #gua{
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             height: 100vh;
+         }
+         body{
+             background: rgb(43,18,22);
+             background: linear-gradient(90deg, rgba(43,18,22,1) 0%, rgba(79,56,62,0.8923028684129902) 26%, rgba(225,108,150,0.8250759776566876) 68%, rgba(206,87,119,1) 100%);
+         }
+         .cta {
+             position: relative;
+             margin-top:200px;
+             margin-bottom: 30px;
+             padding: 12px 18px;
+             transition: all 0.2s ease;
+             border: none;
+             background: none;
+             cursor: pointer;
+         }
+
+         .cta:before {
+             content: "";
+             position: absolute;
+             top: 0;
+             left: 0;
+             display: block;
+             border-radius: 50px;
+             background: #b1dae7;
+             width: 45px;
+             height: 45px;
+             transition: all 0.3s ease;
+         }
+
+         .cta span {
+             position: relative;
+             font-family: "Ubuntu", sans-serif;
+             font-size: 18px;
+             font-weight: 700;
+             letter-spacing: 0.05em;
+             color: #234567;
+         }
+
+         .cta svg {
+             position: relative;
+             top: 0;
+             margin-left: 10px;
+             fill: none;
+             stroke-linecap: round;
+             stroke-linejoin: round;
+             stroke: #234567;
+             stroke-width: 2;
+             transform: translateX(-5px);
+             transition: all 0.3s ease;
+         }
+
+         .cta:hover:before {
+             width: 100%;
+             background: #b1dae7;
+         }
+
+         .cta:hover svg {
+             transform: translateX(0);
+         }
+
+         .cta:active {
+             transform: scale(0.95);
+         }
+         input {
+             border: none;
+             padding: 1rem;
+             border-radius: 1rem;
+             background: #e8e8e8;
+             transition: 0.3s;
+             margin: 10px;
+         }
+
+         input:focus {
+             outline-color: #e8e8e8;
+             background: #e8e8e8;
+             box-shadow: inset 20px 20px 60px #c5c5c5,
+                     inset -20px -20px 60px #ffffff;
+             transition: 0.3s;
+         }
+         .title{
+             color: #131124;
+             font-size: 30px;
+             font-weight: 700;
+         }
+         #test{
+             color: #131124;
+             font-size: 20px;
+             font-weight: 700;
+         }
+         /* 新增样式用于居中显示 rule */
+         .rule {
+             display: none;
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             background-color: rgba(255, 255, 255, 0.95);
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 0 10px rgba(0,0,0,0.5);
+             z-index: 1000;
+             width: 80%;
+             max-width: 500px;
+             text-align: center;
+         }
+         /* 遮罩层 */
+         .overlay {
+             display: none;
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background: rgba(0, 0, 0, 0.5);
+             z-index: 999;
+         }
+         .rule-button {
+        padding: 10px 30px;
+        border-radius: 50px;
+        cursor: pointer;
+        border: 0;
+        background-color: white;
+        box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-size: 15px;
+        transition: all 0.5s ease;
+        }
+
+        .rule-button:hover {
+        letter-spacing: 3px;
+        background-color: hsl(261deg 80% 48%);
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+        }
+
+        .rule-button:active {
+        letter-spacing: 3px;
+        background-color: hsl(261deg 80% 48%);
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+        transform: translateY(10px);
+        transition: 100ms;
+        }
+     </style>
+ </head>
+ <body>
+     <div id="gua">
+         <h1 class="title">六小壬速算</h1>
+         
+         <input type="text" name="" id="con1" placeholder="请输入第一个数字">
+         <input type="text" name="" id="con2" placeholder="请输入第二个数字">
+         <input type="text" name="" id="con3" placeholder="请输入第三个数字">
+         <p id="test"></p>
+         <button id="start" onclick="st()" class="cta"> 
+             <span>得出结果</span>
+             <svg width="15px" height="10px" viewBox="0 0 13 10">
+                 <path d="M1,5 L11,5"></path>
+                 <polyline points="8 1 12 5 8 9"></polyline>
+             </svg>
+         </button>
+         <button onclick="showRule()" class="rule-button">教程</button>
+         <div class="overlay" id="overlay"></div>
+         <div id="rule" class="rule">
+             <div class="rule-content">
+                 <p id="rulep">最简单自测起卦方法，第一念头出现的三位数，第一眼所见到的数，取时分三位数。
+
+                 </p>
+                 <button id="resetButton" onclick="hideRule()">明白了</button>
+                 <a href="https://zhuanlan.zhihu.com/p/561020382">了解详情</a>
+             </div>
+         </div>
+     </div>
+     <script>
+         let lists = ['大安','留连','速喜','赤口','小吉','空亡'];
+         var text_test = document.getElementById('test');
+
+         function st(){
+             var num1 = parseInt(document.getElementById('con1').value);
+             var num2 = parseInt(document.getElementById('con2').value);
+             var num3 = parseInt(document.getElementById('con3').value);
+
+             if (isNaN(num1) || isNaN(num2) || isNaN(num3) || num1 < 1 || num2 < 1 || num3 < 1) {
+                 alert("请输入有效的数字，且每个数字都必须大于或等于1。");
+                 return;
+             }
+
+             let result = [];
+             let pos = 0;
+             const inputs = [num1, num2-1, num3-1];
+
+             for(let i = 0; i < inputs.length; i++){
+                 let n = inputs[i];
+                 if (i === 0) {
+                     pos = (n - 1 + lists.length) % lists.length;
+                 } else {
+                     pos = (pos + n) % lists.length;
+                 }
+                 result.push(lists[pos]);
+             }
+
+             text_test.textContent = result.join(', ');
+
+             // 弹出是否在百度搜索结果
+             if(confirm("结果为：" + result.join(', ') + "\n是否在百度搜索？")) {
+                 window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(result.join(', ')), '_blank');
+             }
+         }
+
+         function showRule(){
+             document.getElementById('rule').style.display = 'flex';
+             document.getElementById('overlay').style.display = 'block';
+         }
+
+         function hideRule(){
+             document.getElementById('rule').style.display = 'none';
+             document.getElementById('overlay').style.display = 'none';
+         }
+
+         // 点击遮罩层也可以关闭教程
+         document.getElementById('overlay').addEventListener('click', hideRule);
+     </script>
+ </body>
+ </html>
